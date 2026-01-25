@@ -1,0 +1,159 @@
+"""
+Advanced Snake Game with Hand Gesture Control
+Using OpenCV, MediaPipe, and Pygame
+
+File: snake_game.py
+Main application entry point
+"""
+
+from src.game.game import SnakeGame
+from src.vision.hand_tracker import HandTracker
+import cv2
+import numpy as np
+
+
+class SnakeGameApp:
+    """Main application controller"""
+
+    def __init__(self):
+        """Initialize the application"""
+        self.game = SnakeGame()
+        self.hand_tracker = HandTracker()
+        self.cap = cv2.VideoCapture(0)
+
+        if not self.cap.isOpened():
+            raise RuntimeError("Cannot open webcam. Please check your camera connection.")
+
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        self.running = True
+        self.pause_gesture_cooldown = 0
+
+    def run(self):
+        """Main game loop"""
+        print("Starting Snake Game...")
+        print("Controls:")
+        print("  - Move hand to control snake direction")
+        print("  - Make a fist to pause/resume")
+        print("  - Press SPACE to start/restart")
+        print("  - Press 'q' to quit")
+
+        try:
+            while self.running:
+                ret, frame = self.cap.read()
+                if not ret:
+                    print("Error: Failed to read frame from webcam")
+                    break
+
+                frame = cv2.flip(frame, 1)
+
+                # Detect hand position
+                hand_pos, is_detected = self.hand_tracker.detect_hand(frame)
+                smoothed_pos = self.hand_tracker.get_smoothed_position()
+
+                # Detect pause gesture (closed fist)
+                is_fist = self.hand_tracker.detect_fist_gesture(frame)
+
+                # Handle pause gesture with cooldown
+                if is_fist and self.pause_gesture_cooldown <= 0:
+                    self.game.toggle_pause()
+                    self.pause_gesture_cooldown = 30
+
+                self.pause_gesture_cooldown -= 1
+
+                # Update game with smoothed hand position
+                if smoothed_pos:
+                    self.game.update_direction(smoothed_pos)
+
+                self.game.update()
+                self.game.draw()
+
+                # Draw hand tracking visualization
+                frame = self.hand_tracker.draw_hand_landmarks(frame)
+
+                if is_detected and smoothed_pos:
+                    cv2.circle(frame, smoothed_pos, 8, (0, 255, 0), -1)
+                    cv2.circle(frame, smoothed_pos, 10, (0, 255, 0), 2)
+
+                # Add status information
+                status = self.game.state.name
+                color = (0, 255, 0) if self.game.state.value == 1 else (255, 165, 0)
+                cv2.putText(frame, f"Game: {status}", (10, 30),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+                cv2.putText(frame, f"Score: {self.game.score}", (10, 70),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+
+                # Display combined view
+                self._display_combined_view(frame)
+
+                # Handle keyboard input
+                self._handle_keyboard_input()
+
+                self.game.clock.tick(self.game.config.FPS)
+
+        except Exception as e:
+            print(f"Error occurred: {e}")
+
+        finally:
+            self.cleanup()
+
+    def _display_combined_view(self, webcam_frame):
+        """Display webcam and game side by side"""
+        try:
+            # Convert Pygame surface to OpenCV format
+            game_surface = self.game.screen
+            game_array = np.transpose(
+                pygame.surfarray.array3d(game_surface),
+                (1, 0, 2)
+            )
+            game_frame = cv2.cvtColor(game_array, cv2.COLOR_RGB2BGR)
+
+            # Resize frames to match
+            h_cam, w_cam = webcam_frame.shape[:2]
+            h_game, w_game = game_frame.shape[:2]
+
+            if h_cam != h_game:
+                game_frame = cv2.resize(game_frame, (w_game, h_cam))
+
+            # Combine horizontally
+            combined = np.hstack([webcam_frame, game_frame])
+            cv2.imshow("Snake Game - Hand Gesture Control", combined)
+
+        except Exception as e:
+            print(f"Display error: {e}")
+
+    def _handle_keyboard_input(self):
+        """Handle keyboard input"""
+        key = cv2.waitKey(1) & 0xFF
+
+        if key == ord('q'):
+            self.running = False
+        elif key == ord(' '):
+            if self.game.state.value == 0:  # MENU
+                self.game.start_game()
+            elif self.game.state.value == 3:  # GAME_OVER
+                self.game.reset_game()
+                self.game.start_game()
+
+    def cleanup(self):
+        """Clean up resources"""
+        print("Cleaning up...")
+        self.cap.release()
+        cv2.destroyAllWindows()
+        self.game.cleanup()
+
+
+if __name__ == "__main__":
+    import pygame
+
+    try:
+        app = SnakeGameApp()
+        app.run()
+    except RuntimeError as e:
+        print(f"Fatal Error: {e}")
+    except KeyboardInterrupt:
+        print("\nGame interrupted by user")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        import traceback
+        traceback.print_exc()

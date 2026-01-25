@@ -1,0 +1,43 @@
+# Advanced Snake Game with Hand Gesture Control
+# Python Dependencies
+# Python 3.8+
+
+# Core Dependencies
+opencv-python==4.8.1.78          # Computer vision and webcam access
+mediapipe==0.10.9                # Hand detection and tracking
+pygame==2.5.2                    # Game engine and rendering
+numpy==1.24.3                    # Numerical computations
+
+# Development Dependencies (optional)
+pytest==7.4.0                    # Testing framework
+pytest-cov==4.1.0               # Code coverage
+black==23.7.0                   # Code formatter
+flake8==6.0.0                   # Code linter
+mypy==1.4.1                     # Type checker
+pylint==2.17.4                  # Code analysis
+
+# Documentation (optional)
+sphinx==7.1.2                   # Documentation generator
+sphinx-rtd-theme==1.3.0        # Read the Docs theme
+
+# Deployment (optional)
+pyinstaller==6.0.0              # Build standalone executables
+cx-Freeze==6.15.13              # Alternative executable builder
+
+# Performance (optional)
+cython==0.29.36                 # C extensions for performance
+numba==0.57.1                   # JIT compilation
+
+# Utilities (optional)
+python-dotenv==1.0.0           # Environment variable management
+requests==2.31.0               # HTTP library
+pyyaml==6.0.1                  # YAML configuration
+
+# Note: Install requirements with:
+# pip install -r requirements.txt
+#
+# For development:
+# pip install -r requirements.txt -r requirements-dev.txt
+#
+# For production (minimal):
+# pip install opencv-python mediapipe pygame numpy
