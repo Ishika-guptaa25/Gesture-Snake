@@ -1,15 +1,8 @@
-"""
-Advanced Snake Game with Hand Gesture Control
-Using OpenCV, MediaPipe, and Pygame
-
-File: snake_game.py
-Main application entry point
-"""
-
-from src.game.game import SnakeGame
-from src.vision.hand_tracker import HandTracker
 import cv2
 import numpy as np
+import pygame  # FIX: Top par import kiya taaki _display_combined_view mein crash na ho
+from game import SnakeGame
+from hand_tracker import HandTracker
 
 
 class SnakeGameApp:
@@ -59,7 +52,9 @@ class SnakeGameApp:
                     self.game.toggle_pause()
                     self.pause_gesture_cooldown = 30
 
-                self.pause_gesture_cooldown -= 1
+                # FIX: Cooldown ko negative hone se bachaya
+                if self.pause_gesture_cooldown > 0:
+                    self.pause_gesture_cooldown -= 1
 
                 # Update game with smoothed hand position
                 if smoothed_pos:
@@ -77,11 +72,12 @@ class SnakeGameApp:
 
                 # Add status information
                 status = self.game.state.name
-                color = (0, 255, 0) if self.game.state.value == 1 else (255, 165, 0)
-                cv2.putText(frame, f"Game: {status}", (10, 30),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+                # FIX: state.value ki jagah direct Enum comparison bhi use kar sakte hain
+                color = (0, 255, 0) if "PLAYING" in status else (0, 165, 255)
+                cv2.putText(frame, f"State: {status}", (10, 30),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
                 cv2.putText(frame, f"Score: {self.game.score}", (10, 70),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
                 # Display combined view
                 self._display_combined_view(frame)
@@ -93,6 +89,8 @@ class SnakeGameApp:
 
         except Exception as e:
             print(f"Error occurred: {e}")
+            import traceback
+            traceback.print_exc()
 
         finally:
             self.cleanup()
@@ -100,20 +98,21 @@ class SnakeGameApp:
     def _display_combined_view(self, webcam_frame):
         """Display webcam and game side by side"""
         try:
-            # Convert Pygame surface to OpenCV format
+            # FIX: Safe Pygame to OpenCV conversion
             game_surface = self.game.screen
-            game_array = np.transpose(
-                pygame.surfarray.array3d(game_surface),
-                (1, 0, 2)
-            )
+            game_array = pygame.surfarray.array3d(game_surface)
+
+            # Rotate and flip to match OpenCV's coordinate system
+            game_array = np.rot90(game_array, 3)
+            game_array = np.fliplr(game_array)
             game_frame = cv2.cvtColor(game_array, cv2.COLOR_RGB2BGR)
 
-            # Resize frames to match
+            # Resize frames to match height
             h_cam, w_cam = webcam_frame.shape[:2]
             h_game, w_game = game_frame.shape[:2]
 
             if h_cam != h_game:
-                game_frame = cv2.resize(game_frame, (w_game, h_cam))
+                game_frame = cv2.resize(game_frame, (int(w_game * (h_cam / h_game)), h_cam))
 
             # Combine horizontally
             combined = np.hstack([webcam_frame, game_frame])
@@ -129,31 +128,25 @@ class SnakeGameApp:
         if key == ord('q'):
             self.running = False
         elif key == ord(' '):
-            if self.game.state.value == 0:  # MENU
+            # 0: MENU, 3: GAME_OVER (Check snake_game logic for exact values)
+            if self.game.state.value == 0:
                 self.game.start_game()
-            elif self.game.state.value == 3:  # GAME_OVER
+            elif self.game.state.value == 3:
                 self.game.reset_game()
                 self.game.start_game()
 
     def cleanup(self):
         """Clean up resources"""
         print("Cleaning up...")
-        self.cap.release()
+        if self.cap.isOpened():
+            self.cap.release()
         cv2.destroyAllWindows()
         self.game.cleanup()
 
 
 if __name__ == "__main__":
-    import pygame
-
     try:
         app = SnakeGameApp()
         app.run()
-    except RuntimeError as e:
-        print(f"Fatal Error: {e}")
-    except KeyboardInterrupt:
-        print("\nGame interrupted by user")
     except Exception as e:
-        print(f"Unexpected error: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"Fatal Error: {e}")

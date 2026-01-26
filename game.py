@@ -1,18 +1,10 @@
-"""
-Core game logic for Snake Game
-
-File: src/game/game.py
-Manages game state, physics, and rendering
-"""
-
 import pygame
 import random
 from collections import deque
 from enum import Enum
-from typing import Tuple, Optional
+from typing import Tuple
 
-from src.config import ConfigManager
-
+from config import ConfigManager
 
 class Direction(Enum):
     """Snake movement directions"""

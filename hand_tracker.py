@@ -12,7 +12,8 @@ from collections import deque
 from typing import Tuple, Optional
 import math
 
-from src.config import ConfigManager
+from config import ConfigManager
+
 
 
 class HandTracker:
