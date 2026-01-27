@@ -1,10 +1,3 @@
-"""
-Hand tracking module using MediaPipe
-
-File: src/vision/hand_tracker.py
-Handles real-time hand detection and gesture recognition
-"""
-
 import cv2
 import mediapipe as mp
 import numpy as np

@@ -6,8 +6,6 @@ from hand_tracker import HandTracker
 
 
 class SnakeGameApp:
-    """Main application controller"""
-
     def __init__(self):
         """Initialize the application"""
         self.game = SnakeGame()

@@ -1,10 +1,3 @@
-"""
-Configuration file for Snake Game with Hand Gesture Control
-
-File: src/config.py
-Contains all configuration settings for the game
-"""
-
 from dataclasses import dataclass
 from typing import Tuple
 
