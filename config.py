@@ -4,7 +4,7 @@ from typing import Tuple
 
 @dataclass
 class GameConfig:
-    """Game configuration settings"""
+
 
     # Window Settings
     WINDOW_WIDTH: int = 800
