@@ -16,6 +16,10 @@ A modern, interactive Snake game controlled entirely through **real-time hand ge
 - **Difficulty Scaling**: Speed increases with snake length
 - **Real-time Detection**: 60 FPS hand tracking via MediaPipe
 
+## Screenshots 
+<img width="500" height="350" alt="image" src="https://github.com/user-attachments/assets/77fff342-ad6b-4db7-bf5b-901fd5d6386e" />
+<img width="500" height="350" alt="image" src="https://github.com/user-attachments/assets/db8df624-e5db-4902-b718-bb92a56f4b5f" />
+<img width="500" height="350" alt="image" src="https://github.com/user-attachments/assets/c82a19dd-77ff-46de-a951-0caf83f38d1a" />
 
 ## 📋 System Requirements
 
