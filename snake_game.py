@@ -1,9 +1,8 @@
 import cv2
 import numpy as np
-import pygame  # FIX: Top par import kiya taaki _display_combined_view mein crash na ho
+import pygame
 from game import SnakeGame
 from hand_tracker import HandTracker
-
 
 class SnakeGameApp:
     def __init__(self):
@@ -70,7 +69,6 @@ class SnakeGameApp:
 
                 # Add status information
                 status = self.game.state.name
-                # FIX: state.value ki jagah direct Enum comparison bhi use kar sakte hain
                 color = (0, 255, 0) if "PLAYING" in status else (0, 165, 255)
                 cv2.putText(frame, f"State: {status}", (10, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)

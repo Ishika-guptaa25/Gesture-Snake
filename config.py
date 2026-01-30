@@ -1,6 +1,15 @@
+<<<<<<< HEAD
+=======
+"""
+Configuration file for Snake Game with Hand Gesture Control
+
+File: config.py
+Contains all configuration settings for the game
+"""
+
+>>>>>>> 2f8e980 (Fixes and updates)
 from dataclasses import dataclass
 from typing import Tuple
-
 
 @dataclass
 class GameConfig:

@@ -13,14 +13,12 @@ class Direction(Enum):
     LEFT = (-1, 0)
     RIGHT = (1, 0)
 
-
 class GameState(Enum):
     """Game state enumeration"""
     MENU = 0
     PLAYING = 1
     PAUSED = 2
     GAME_OVER = 3
-
 
 class SnakeGame:
     """Main game logic controller"""

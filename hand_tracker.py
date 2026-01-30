@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+=======
+"""
+Hand tracking module using MediaPipe
+
+File: hand_tracker.py
+Handles real-time hand detection and gesture recognition
+"""
+
+>>>>>>> 2f8e980 (Fixes and updates)
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -6,8 +16,6 @@ from typing import Tuple, Optional
 import math
 
 from config import ConfigManager
-
-
 
 class HandTracker:
     """Real-time hand tracking and gesture detection"""

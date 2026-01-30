@@ -3,7 +3,6 @@
 A modern, interactive Snake game controlled entirely through **real-time hand gestures** using your webcam. Built with Python, OpenCV, MediaPipe, and Pygame.
 
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-success)
 
 ##  Features
@@ -118,6 +117,9 @@ python -c "import cv2; cap = cv2.VideoCapture(0); print(cap.isOpened())"
 | mediapipe | 0.10.9 | Hand detection & tracking |
 | pygame | 2.5.2 | Game engine & rendering |
 | numpy | 1.24.3 | Numerical computations |
+
+
+
 
 
 
